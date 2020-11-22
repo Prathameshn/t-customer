@@ -1,0 +1,60 @@
+syntax="proto3";
+
+service CustomerService {
+   rpc findOrCreate(CustomerRequest) returns (Customer){}
+   rpc getCustomerList(CustomersListRequest) returns (CustomerList){}
+   rpc setCustomerById(CustomerRequest) returns (Customer){}
+}
+
+message Customer {
+   string id=1;
+   Mobile mobile=2;
+   string email=3;
+   string firstName=4;
+   string lastName=5;
+   string gender=6;
+   string dob=7;
+   string createdAt=8;
+   string updatedAt=9;
+   MobileDeviceInfo mobileDeviceInfo=10;
+   PlatformPartner platformPartner=11;
+   string referralCode =12;
+   string picture =13;
+   string role =14;
+   int32 age =15;
+}
+
+message MobileDeviceInfo{
+   string fcmId=1;
+   string platformType=2;
+   string make=3;
+   string model=4;
+}
+
+message Mobile{
+   string number=1;
+   string countryCode=2;
+}
+
+message PlatformPartner{
+   string id=1;
+   string name=2;
+}
+
+message CustomerRequest{
+   Mobile mobile=1;
+   string firstName=2;
+   string lastName=3;
+   string email=4;
+   string id=5;
+}
+
+message CustomersListRequest{
+   string page=1;
+   string perPage=2;
+   string search=3;
+}
+
+message CustomerList {
+   repeated Customer Customers = 1;
+}
