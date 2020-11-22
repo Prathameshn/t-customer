@@ -27,8 +27,8 @@ module.exports = {
     business: process.env.GRPC_BUSINESS
   },
   s3: {
-    accessKey: process.env.VIGO_S3_ACCESSKEY,
-    secretKey: process.env.VIGO_GW_S3_SECRETKEY,
-    bucketName: process.env.VIGO_GW_S3_BUCKETNAME
+    accessKey: process.env.S3_ACCESSKEY,
+    secretKey: process.env.S3_SECRETKEY,
+    bucketName: process.env.S3_BUCKETNAME
   },
 };
