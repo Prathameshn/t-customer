@@ -2,6 +2,7 @@ const express = require('express');
 const controller = require('@controllers/feed.controller');
 const { authorize } = require('@middlewares/auth');
 const customerService = require("@services/customer.service")
+const feedService = require("@services/feed.service")
 const multer = require("multer")
 
 const storage = multer.diskStorage({
@@ -44,6 +45,14 @@ router
    .put(authorize(), controller.replace)
    .patch(authorize(),upload.array('file'),controller.setMedia,controller.compressImage,controller.update)
    .delete(authorize(), controller.remove);
+
+router
+   .route('/:feedId/likeUnlike')
+   .post(authorize(),customerService.setCustomer,feedService.likeUnlike,controller.update)
+
+router
+   .route('/:feedId/postComment')
+   .post(authorize(),customerService.setCustomer,feedService.postComment,controller.postComment)
 
 
 module.exports = router;

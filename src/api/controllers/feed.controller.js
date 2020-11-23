@@ -161,3 +161,19 @@ exports.compressImage = async (req, res, next) => {
        next(new APIError({"message":"Error while compresing image"}));
    }
 }
+
+/**
+ * Update existing feed and responce with feed comment
+ * @public
+ */
+exports.postComment = async(req, res, next) => {
+   try{
+      let { feedComment } = req.locals
+      const updatedFeed = omit(req.body);
+      const feed = Object.assign(req.locals.feed, updatedFeed);
+      const savedFeed = await feed.save();
+      res.json(feedComment)
+   }catch(error){
+      next(new APIError(error))
+   }
+};

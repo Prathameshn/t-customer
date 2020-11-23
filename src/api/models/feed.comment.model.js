@@ -10,7 +10,7 @@ var feedCommentSchema = new Schema({
     customer:{ type: ObjectId , ref:'Customer'},
     isDeleted:{ type: Boolean},
     isEdited:{ type: Boolean},
-    comment:{ type: String}
+    comment:{ type: String ,required:true}
 },
   { timestamps: true }
 )

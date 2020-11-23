@@ -21,8 +21,12 @@ exports.setCustomer = async (req, res, next) => {
    try {
       const { entity } = req.session
       const customer = await Customer.get(entity)
-      req.locals = {
-         customer : customer.transform()
+      if(req.locals)
+         req.locals.customer = customer.transform()
+      else{
+         req.locals = {
+            customer:customer.transform()
+         }
       }
       return next()
    } catch (error) {

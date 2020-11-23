@@ -8,7 +8,7 @@ const ObjectId = Schema.Types.ObjectId
 var feedLikeSchema = new Schema({
     feed:{ type: ObjectId,ref:'Feed'},
     customer:{ type: ObjectId , ref:'Customer'},
-    status:{ type: Boolean}
+    status:{ type: Boolean,default:true}
 },
   { timestamps: true }
 )
