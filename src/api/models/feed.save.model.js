@@ -7,25 +7,26 @@ const ObjectId = Schema.Types.ObjectId
 
 var feedSaveSchema = new Schema({
     feed:{ type: ObjectId,ref:'Feed'},
-    savedBy:{ type: ObjectId , ref:'Customer'},
+    customer:{ type: ObjectId , ref:'Customer'},
     status:{ type: Boolean},
     type : { type: String}
 },
   { timestamps: true }
 )
 
-feedSaveSchema.index({ 'likedBy': 1})
+feedSaveSchema.index({ 'customer': 1})
 
 feedSaveSchema.method({
   transform() {
     const transformed = {};
     const fields = [
       "feed",
-      "savedBy",
+      "customer",
       "status",
       "type",
       "createdAt",
-      "updatedAt"
+      "updatedAt",
+      "id"
     ];
     fields.forEach((field) => {
       transformed[field] = this[field];

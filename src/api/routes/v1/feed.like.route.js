@@ -6,15 +6,16 @@ const router = express.Router();
 /**
  * Load vitalRules when API with vitalRulesId route parameter is hit
  */
-router.param('feedId', controller.load);
+router.param('feedLikeId', controller.load);
 
 
 router
    .route('/')
    .get(authorize(),controller.list)
    .post(authorize(),controller.create)
+   
 router
-   .route('/:feedId')
+   .route('/:feedLikeId')
    .get(authorize(), controller.get)
    .put(authorize(), controller.replace)
    .patch(authorize(), controller.update)

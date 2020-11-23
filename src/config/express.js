@@ -54,6 +54,9 @@ passport.use('jwt', strategies.jwt);
 // mount api v1 routes
 app.use('/v1/customer', routes);
 
+app.use(express.static('public'))
+
+
 //for kubernetes
 app.get('/v1/health',(req,res,next)=>{
     res.status(200).send('OK')

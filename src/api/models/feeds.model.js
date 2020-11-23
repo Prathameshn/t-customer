@@ -6,18 +6,19 @@ const httpStatus = require('http-status');
 const ObjectId = Schema.Types.ObjectId
 
 var feedSchema = new Schema({
-    type:{ type: String},
-    mode:{ type: String},
-    likeCount: { type: Number},
-    commentCount: { type: Number},
-    description: { type:String},
-    title: { type: String},
+    type:{ type: String, enum:["INNOVATION","POST"], default:"POST"},
+    mode:{ type: String, enum:["LOCAL","GLOBAL"], default:"LOCAL" },
+    likeCount: { type: Number, default:0},
+    commentCount: { type: Number, default:0},
+    description: { type:String, require:true },
+    title: { type: String, require:true},
     productName: { type: String},
     productDescription: { type: String},
     businessName: { type: String},
     contactNumber: { type: String},
     address: { type: String},
-    isDeleted:{ type: Boolean},
+    isDeleted:{ type: Boolean, default:false},
+    isEdited:{ type: Boolean, default:false},
     media:{
         type:[{ 
             fieldname: String,
@@ -27,19 +28,21 @@ var feedSchema = new Schema({
             destination: String,
             filename: String,
             path: String,
-            size: Number 
+            size: Number,
+            compressImageUrl:String 
         }],
         default:[]
     },
-    createdBy:{
+    customer:{
         type:ObjectId,
-        ref:'Customer'
+        ref:'Customer',
+        require:true
     }
 },
   { timestamps: true }
 )
 
-feedSchema.index({ 'createdBy': 1})
+feedSchema.index({ 'customer': 1})
 
 feedSchema.method({
   transform() {
@@ -58,9 +61,10 @@ feedSchema.method({
         "address",
         "isDeleted",
         "media",
-        "createdBy",
+        "customer",
         "createdAt",
-        "updatedAt"
+        "updatedAt",
+        "id"
     ];
     fields.forEach((field) => {
       transformed[field] = this[field];

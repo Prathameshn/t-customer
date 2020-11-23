@@ -7,7 +7,7 @@ const ObjectId = Schema.Types.ObjectId
 
 var feedCommentSchema = new Schema({
     feed:{ type: ObjectId,ref:'Feed'},
-    commentedBy:{ type: ObjectId , ref:'Customer'},
+    customer:{ type: ObjectId , ref:'Customer'},
     isDeleted:{ type: Boolean},
     isEdited:{ type: Boolean},
     comment:{ type: String}
@@ -15,19 +15,20 @@ var feedCommentSchema = new Schema({
   { timestamps: true }
 )
 
-feedCommentSchema.index({ 'commentedBy': 1})
+feedCommentSchema.index({ 'customer': 1})
 
 feedCommentSchema.method({
   transform() {
     const transformed = {};
     const fields = [
       "feed",
-      "commentedBy",
+      "customer",
       "isDeleted",
       "isEdited",
       "comment",
       "createdAt",
-      "updatedAt"
+      "updatedAt",
+      "id"
     ];
     fields.forEach((field) => {
       transformed[field] = this[field];
