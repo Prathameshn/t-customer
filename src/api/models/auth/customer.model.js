@@ -42,10 +42,6 @@ const customerSchema = new mongoose.Schema({
   },
   gender: { type: String, enum: Genders },
   dob: { type: Date },
-  platformPartner: {
-    id: { type: Schema.Types.ObjectId, ref: 'PlatformPartner' },
-    name: String
-  },
   referralCode: {
     type: String,
   },
@@ -64,6 +60,9 @@ const customerSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  password:{
+    type:String
+  }
 },{ timestamps: true },
 {
    toObject: { virtuals: true },
