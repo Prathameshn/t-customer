@@ -88,6 +88,8 @@ exports.update = async(req, res, next) => {
  */
 exports.list = async (req, res, next) => {
    try {
+      req.query.type = "POST"
+      req.query.isDeleted = false
       let feeds = await Feed.list(req.query);
       req.locals = {feeds}
       next()
@@ -95,6 +97,23 @@ exports.list = async (req, res, next) => {
       next(new APIError(error));
    }
 };
+
+/**
+ * Get feed list
+ * @public
+ */
+exports.listInnovation = async (req, res, next) => {
+   try {
+      req.query.type = "INNOVATION"
+      req.query.isDeleted = false
+      let feeds = await Feed.list(req.query);
+      req.locals = {feeds}
+      next()
+   } catch (error) {
+      next(new APIError(error));
+   }
+};
+
 
 /**
  * Delete feed

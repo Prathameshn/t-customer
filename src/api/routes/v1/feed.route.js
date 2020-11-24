@@ -38,7 +38,11 @@ router
    .route('/')
    .get(authorize(),controller.list,feedService.setAllFeedLikeAndSaveStatus)
    .post(authorize(),customerService.setCustomer,upload.array('file'),controller.setMedia,controller.compressImage,controller.create)
-   
+
+router
+   .route('/allInnovation')
+   .get(authorize(),controller.listInnovation,feedService.setAllFeedLikeAndSaveStatus)
+
 router
    .route('/:feedId')
    .get(authorize(), controller.get)

@@ -107,8 +107,8 @@ feedSchema.statics = {
    * @param {number} limit - Limit number of feed types to be returned.
    * @returns {Promise<Subject[]>}
    */
-  async list({ page = 1, perPage = 30, customer,type }) {
-    const options = omitBy({ customer,type }, isNil);
+  async list({ page = 1, perPage = 30, customer,type,isDeleted }) {
+    const options = omitBy({ customer,type,isDeleted }, isNil);
 
     let feeds = await this.find(options)
       .sort({ createdAt: -1 })
