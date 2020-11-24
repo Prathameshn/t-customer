@@ -7,7 +7,7 @@ const ObjectId = Schema.Types.ObjectId
 
 var feedSchema = new Schema({
     type:{ type: String, enum:["INNOVATION","POST"], default:"POST"},
-    mode:{ type: String, enum:["LOCAL","GLOBAL"], default:"LOCAL" },
+    mode:{ type: String, enum:["LOCAL","PUBLIC"], default:"LOCAL" },
     likeCount: { type: Number, default:0},
     commentCount: { type: Number, default:0},
     description: { type:String, require:true },
@@ -87,8 +87,8 @@ feedSchema.statics = {
       if (mongoose.Types.ObjectId.isValid(id)) {
         feed = await this.findById(id).exec();
       }
-      if (feed) {
-        return feed
+      if (feed && !feed.isDeleted) {
+        return feed.transform()
       }
 
       throw new APIError({

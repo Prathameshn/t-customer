@@ -4,6 +4,7 @@ const Feed = require("@models/feeds.model")
 const APIError = require('@utils/APIError');
 const convertor = require('convert-to-thumbnail');
 const path = require('path');
+const feedService = require("@services/feed.service")
 
 
 /**
@@ -24,7 +25,12 @@ exports.load = async (req, res, next, id) => {
  * Get feed
  * @public
  */
-exports.get = (req, res) => res.json(req.locals.feed);
+exports.get = async(req, res) => {
+   let { feed } = req.locals
+   feed.isLike = await feedService.getLikeStatus(feed,req.session.entity)
+   feed.isSave = await feedService.getFeedSaveStatus(feed,req.session.entity)
+   res.json(feed)
+};
 
 /**
  * Create new feed
@@ -82,8 +88,16 @@ exports.update = async(req, res, next) => {
  */
 exports.list = async (req, res, next) => {
    try {
-      const feeds = await Feed.list(req.query);
-      res.json(feeds);
+      let { entity } = req.session
+      let feeds = await Feed.list(req.query);
+      for(let i=0;i>=0;i++){
+         if(feeds.feeds[i]){
+           feeds.feeds[i].isLiked = await feedService.getLikeStatus(feeds.feeds[i],entity)
+           feeds.feeds[i].isSave = await feedService.getFeedSaveStatus(feeds.feeds[i],entity)
+         }else{
+           return res.json(feeds);
+         }
+       }
    } catch (error) {
       next(new APIError(error));
    }
@@ -93,12 +107,15 @@ exports.list = async (req, res, next) => {
  * Delete feed
  * @public
  */
-exports.remove = (req, res, next) => {
-   const { feed } = req.locals;
-
-   feed.remove()
-      .then(() => res.status(httpStatus.NO_CONTENT).end())
-      .catch(e => next(new APIError(error)));
+exports.remove = async(req, res, next) => {
+   try{
+      const { feed } = req.locals;
+      feed.isDeleted = true
+      await feed.save()
+      res.status(httpStatus.NO_CONTENT).end()
+   }catch(error){
+      next(new APIError(error));
+   }
 };
 
 exports.setMedia = async(req, res, next) => {

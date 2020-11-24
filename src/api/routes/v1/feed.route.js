@@ -54,5 +54,16 @@ router
    .route('/:feedId/postComment')
    .post(authorize(),customerService.setCustomer,feedService.postComment,controller.postComment)
 
+router
+   .route('/:feedId/saveFeed')
+   .post(authorize(),customerService.setCustomer,feedService.saveFeed)
+
+router
+   .route('/:feedId/getAllLikes')
+   .get(authorize(),feedService.getAllLikes)
+
+router
+   .route('/:feedId/getAllComments')
+   .get(authorize(),feedService.getAllComments)
 
 module.exports = router;

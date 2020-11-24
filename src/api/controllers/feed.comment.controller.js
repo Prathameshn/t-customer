@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const { omit } = require('lodash');
 const FeedComment = require("@models/feed.comment.model")
 const APIError = require('@utils/APIError');
-
+const Feed = require("@models/feeds.model")
 
 /**
  * Load FeedComment and append to req.
@@ -62,16 +62,16 @@ exports.replace = async (req, res, next) => {
  * Update existing feedComment
  * @public
  */
-exports.update = (req, res, next) => {
-   const updatedFeedComment = omit(req.body);
-   const feedComment = Object.assign(req.locals.feedComment, updatedFeedComment);
-
-   feedComment.save()
-      .then(savedFeedComment =>{
-         req.locals = { feedComment:savedFeedComment }
-         next()
-      })
-      .catch(e => next(new APIError(e)));
+exports.update = async(req, res, next) => {
+   try{
+      const updatedFeedComment = omit(req.body);
+      const feedComment = Object.assign(req.locals.feedComment, updatedFeedComment);
+   
+      let comment = await feedComment.save()
+      res.json(comment)
+   }catch(error){
+      next(new APIError(error));
+   }
 };
 
 /**
@@ -91,10 +91,21 @@ exports.list = async (req, res, next) => {
  * Delete feedComment
  * @public
  */
-exports.remove = (req, res, next) => {
-   const { feedComment } = req.locals;
-
-   feedComment.remove()
-      .then(() => res.status(httpStatus.NO_CONTENT).end())
-      .catch(e => next(new APIError(error)));
+exports.remove = async(req, res, next) => {
+   try{
+      const { feedComment } = req.locals;
+      const { entity } = req.session
+      if(feedComment.customer+"" == entity+""){
+         feedComment.isDeleted = true
+         await feedComment.save()
+         let feed = await Feed.findById(feedComment.feed)
+         feed.commentCount = feed.commentCount -1
+         await feed.save()
+         res.json({message:"Success"})
+      }else{
+         next(new APIError({message:"Can't delete the comment, not created by you"}));
+      }
+   }catch(error){
+      next(new APIError(error));
+   }
 };

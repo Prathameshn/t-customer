@@ -8,8 +8,8 @@ const ObjectId = Schema.Types.ObjectId
 var feedSaveSchema = new Schema({
     feed:{ type: ObjectId,ref:'Feed'},
     customer:{ type: ObjectId , ref:'Customer'},
-    status:{ type: Boolean},
-    type : { type: String}
+    status:{ type: Boolean,default:true},
+    type : { type: String,enum:["INNOVATION","POST"]}
 },
   { timestamps: true }
 )
@@ -70,7 +70,7 @@ feedSaveSchema.statics = {
    * @returns {Promise<Subject[]>}
    */
   async list({ page = 1, perPage = 30, createdBy }) {
-    const options = omitBy({ createdBy }, isNil);
+    const options = omitBy({ createdBy,status }, isNil);
 
     let feedSave = await this.find(options)
       .sort({ createdAt: -1 })

@@ -51,7 +51,7 @@ feedCommentSchema.statics = {
       if (mongoose.Types.ObjectId.isValid(id)) {
         feedComment = await this.findById(id).exec();
       }
-      if (feedComment) {
+      if (feedComment && !feedComment.isDeleted) {
         return feedComment
       }
 
@@ -72,9 +72,10 @@ feedCommentSchema.statics = {
    * @returns {Promise<Subject[]>}
    */
   async list({ page = 1, perPage = 30, createdBy }) {
-    const options = omitBy({ createdBy }, isNil);
+    const options = omitBy({ createdBy, isDeleted }, isNil);
 
     let feedComments = await this.find(options)
+      .populate('customer','_id firstName lastName picture')
       .sort({ createdAt: -1 })
       .skip(perPage * (page * 1 - 1))
       .limit(perPage * 1)

@@ -68,9 +68,10 @@ feedLikeSchema.statics = {
    * @returns {Promise<Subject[]>}
    */
   async list({ page = 1, perPage = 30, createdBy }) {
-    const options = omitBy({ createdBy }, isNil);
+    const options = omitBy({ createdBy, status }, isNil);
 
     let feedLikes = await this.find(options)
+      .populate('customer','_id firstName lastName picture')
       .sort({ createdAt: -1 })
       .skip(perPage * (page * 1 - 1))
       .limit(perPage * 1)
