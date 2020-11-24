@@ -1,6 +1,7 @@
 const FeedLike = require("@models/feed.like.model")
 const FeedComment = require("@models/feed.comment.model")
 const FeedSave = require("@models/feed.save.model")
+const Feed = require("@models/feeds.model")
 const APIError = require('@utils/APIError');
 
 exports.likeUnlike = async(req,res,next)=>{
@@ -122,5 +123,47 @@ exports.saveFeed = async(req,res,next)=>{
         }
     }catch(error){
         return next(new APIError(error))
+    }
+}
+
+exports.getMyPost =  async(req,res,next)=>{
+    try{
+        let { entity } = req.session
+        req.query.customer = entity
+        req.query.type = 'POST'
+        let feeds = await Feed.list(req.query)
+        req.locals={feeds : feeds}
+        await this.setAllFeedLikeAndSaveStatus(req,res,next)
+    }
+    catch(error){
+        return next(new APIError(error))
+    }
+}
+
+exports.getMyInnovation =  async(req,res,next)=>{
+    try{
+        let { entity } = req.session
+        req.query.customer = entity
+        req.query.type = 'INNOVATION'
+        let feeds = await Feed.list(req.query)
+        req.locals={feeds : feeds}
+        await this.setAllFeedLikeAndSaveStatus(req,res,next)
+    }
+    catch(error){
+        return next(new APIError(error))
+    }
+}
+
+
+exports.setAllFeedLikeAndSaveStatus = async(req,res,next)=>{
+    let { feeds } = req.locals
+    let {entity} = req.session
+    for(let i=0;i>=0;i++){
+        if(feeds.feeds[i]){
+            feeds.feeds[i].isLiked = await this.getLikeStatus(feeds.feeds[i],entity)
+            feeds.feeds[i].isSave = await this.getFeedSaveStatus(feeds.feeds[i],entity)
+        }else{
+            return res.json(feeds)
+        }
     }
 }

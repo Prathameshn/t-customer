@@ -88,16 +88,9 @@ exports.update = async(req, res, next) => {
  */
 exports.list = async (req, res, next) => {
    try {
-      let { entity } = req.session
       let feeds = await Feed.list(req.query);
-      for(let i=0;i>=0;i++){
-         if(feeds.feeds[i]){
-           feeds.feeds[i].isLiked = await feedService.getLikeStatus(feeds.feeds[i],entity)
-           feeds.feeds[i].isSave = await feedService.getFeedSaveStatus(feeds.feeds[i],entity)
-         }else{
-           return res.json(feeds);
-         }
-       }
+      req.locals = {feeds}
+      next()
    } catch (error) {
       next(new APIError(error));
    }

@@ -36,7 +36,7 @@ router.param('feedId', controller.load);
 
 router
    .route('/')
-   .get(authorize(),controller.list)
+   .get(authorize(),controller.list,feedService.setAllFeedLikeAndSaveStatus)
    .post(authorize(),customerService.setCustomer,upload.array('file'),controller.setMedia,controller.compressImage,controller.create)
    
 router

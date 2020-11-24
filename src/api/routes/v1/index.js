@@ -17,7 +17,7 @@ router.get('/status', (req, res) => res.send('OK'));
 router.use('/docs', express.static('docs'));
 
 router.use('/auth', authRoutes);
-router.use('/customer', customerRoutes);
+router.use('/', customerRoutes);
 router.use('/feed', feedRoutes);
 router.use('/feedLike', feedLikeRoutes);
 router.use('/feedComment', feedCommentRoutes);
