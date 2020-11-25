@@ -6,9 +6,9 @@ const httpStatus = require('http-status');
 const ObjectId = Schema.Types.ObjectId
 
 var connectionRequestSchema = new Schema({
-    sender:{ type: ObjectId , ref:'Customer'},
-    receiver:{ type: ObjectId , ref:'Customer'},
-    status:{ type: Boolean,default:true}
+    from:{ type: ObjectId , ref:'Customer'},
+    to:{ type: ObjectId , ref:'Customer'},
+    status:{ type: String, default:'REQUESTED', enum:['REQUESTED','ACCEPTED','CANCELLED','REJECTED','BLOCKED']}
 },
   { timestamps: true }
 )
@@ -19,8 +19,8 @@ connectionRequestSchema.method({
   transform() {
     const transformed = {};
     const fields = [
-      "sender",
-      "receiver",
+      "from",
+      "to",
       "status",
       "createdAt",
       "updatedAt",
@@ -67,10 +67,11 @@ connectionRequestSchema.statics = {
    * @param {number} limit - Limit number of connectionRequest types to be returned.
    * @returns {Promise<Subject[]>}
    */
-  async list({ page = 1, perPage = 30, createdBy }) {
-    const options = omitBy({ createdBy, isDeleted }, isNil);
+  async list({ page = 1, perPage = 30, to,from }) {
+    const options = omitBy({ to,from }, isNil);
 
     let connectionRequests = await this.find(options)
+      .populate('to from','_id firstName lastName picture')
       .sort({ createdAt: -1 })
       .skip(perPage * (page * 1 - 1))
       .limit(perPage * 1)

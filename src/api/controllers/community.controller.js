@@ -32,8 +32,7 @@ exports.create = async (req, res, next) => {
    try {
       const community = new Community(req.body);
       const savedCommunity = await community.save();
-      req.locals = { community:savedCommunity }
-      res.json(req.locals.community)
+      res.json(savedCommunity)
    } catch (error) {
       next(new APIError(error));
    }
@@ -68,8 +67,7 @@ exports.update = (req, res, next) => {
 
    community.save()
       .then(savedCommunity =>{
-         req.locals = { community:savedCommunity }
-         res.json(req.locals.community)
+         res.json(savedCommunity)
       })
       .catch(e => next(new APIError(e)));
 };

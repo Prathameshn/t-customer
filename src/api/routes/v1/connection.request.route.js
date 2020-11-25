@@ -1,5 +1,6 @@
 const express = require('express');
-const controller = require('@controllers/connection.controller.controller');
+const controller = require('@controllers/connection.reqeust.controller');
+const service = require('@services/connection.request.service');
 const { authorize } = require('@middlewares/auth');
 
 const router = express.Router();
@@ -12,7 +13,7 @@ router.param('connectionRequestId', controller.load);
 router
    .route('/')
    .get(authorize(),controller.list)
-   .post(authorize(),controller.create)
+   .post(authorize(),service.setBodyForCreateConnection,service.checkExist,controller.create)
 
 router
    .route('/:connectionRequestId')
@@ -20,6 +21,23 @@ router
    .put(authorize(), controller.replace)
    .patch(authorize(), controller.update)
    .delete(authorize(), controller.remove);
+
+router
+   .route('/:connectionRequestId/acceptRequest')
+   .patch(authorize(), service.acceptRequest, controller.update);
+
+router
+   .route('/:connectionRequestId/rejectRequest')
+   .patch(authorize(),service.rejectRequest ,controller.update)
+
+router
+   .route('/:connectionRequestId/blockRequest')
+   .patch(authorize(),service.blockRequest ,controller.update)
+
+router
+   .route('/:connectionRequestId/cancelRequest')
+   .patch(authorize(),service.cancelRequest ,controller.update)
+   
 
 // router
 //    .route("/connection/request/MyRequest")

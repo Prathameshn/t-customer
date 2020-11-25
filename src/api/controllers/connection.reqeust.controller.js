@@ -30,10 +30,25 @@ exports.get = (req, res) => res.json(req.locals.connectionRequest);
  */
 exports.create = async (req, res, next) => {
    try {
-      const connectionRequest = new ConnectionRequest(req.body);
-      const savedConnectionRequest = await connectionRequest.save();
-      req.locals = { connectionRequest:savedConnectionRequest }
-      res.json(req.locals.connectionRequest)
+      let { requestObj } = req.locals
+      if(requestObj){
+         if(requestObj.status == "BLOCKED"){
+            return next(new APIError({message:"Sorry you are allowed to send request"}))
+         }else if(requestObj.status == "ACCEPTED"){
+            res.json(requestObj)
+         }
+         else if(requestObj.status == "REQUESTED"){
+            res.json(requestObj)
+         }else{
+            requestObj.status == "REQUESTED"
+            requestObj = await requestObj.save()
+            res.json(requestObj)
+         }
+      }else{
+         const connectionRequest = new ConnectionRequest(req.body);
+         const savedConnectionRequest = await connectionRequest.save();
+         res.json(savedConnectionRequest)
+      }
    } catch (error) {
       next(new APIError(error));
    }

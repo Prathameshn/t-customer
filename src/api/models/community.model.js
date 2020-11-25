@@ -7,7 +7,13 @@ const ObjectId = Schema.Types.ObjectId
 
 var communitySchema = new Schema({
     customer:{ type: ObjectId , ref:'Customer'},
-    community:{ type : [{ type:ObjectId, ref:'Customer'}]}
+    community:{ 
+      type : [{
+        user :{ type:ObjectId, ref:'Customer'},
+        createdAt:{type:Date,default:Date.now},
+        updatedAt:{type:Date,default:Date.now}
+      }]
+    }
 },
   { timestamps: true }
 )
@@ -65,8 +71,8 @@ communitySchema.statics = {
    * @param {number} limit - Limit number of community types to be returned.
    * @returns {Promise<Subject[]>}
    */
-  async list({ page = 1, perPage = 30, createdBy }) {
-    const options = omitBy({ createdBy, isDeleted }, isNil);
+  async list({ page = 1, perPage = 30, customer }) {
+    const options = omitBy({ customer, isDeleted }, isNil);
 
     let communitys = await this.find(options)
       .populate('community.customer','_id firstName lastName picture')
